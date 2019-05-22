@@ -65,16 +65,16 @@ class CounterCache
                 $relation = $model->{$relationName}();
 
                 // Update the count value for counter cache column
-                $this->updateCount($model, $relation, $counterCacheConditions, $model->getAttribute($relation->getForeignKey()), $counterCacheColumnName);
+                $this->updateCount($model, $relation, $counterCacheConditions, $model->getAttribute($relation->getForeignKeyName()), $counterCacheColumnName);
 
                 // If our model's foreign key has been updated,
                 // we need to update the counter cache for the previous value as well
-                if (! is_null($model->getOriginal($relation->getForeignKey())) && $model->getOriginal($relation->getForeignKey()) != $model->getAttribute($relation->getForeignKey())) {
+                if (! is_null($model->getOriginal($relation->getForeignKey())) && $model->getOriginal($relation->getForeignKeyName()) != $model->getAttribute($relation->getForeignKeyName())) {
                     // Retrieve original foreign key
-                    $originalForeignKey = $model->getOriginal($relation->getForeignKey());
+                    $originalForeignKey = $model->getOriginal($relation->getForeignKeyName());
 
                     // Re-instantiate model and fill it with original foreign key
-                    $reModel = $model->newInstance([$relation->getForeignKey() => $originalForeignKey]);
+                    $reModel = $model->newInstance([$relation->getForeignKeyName() => $originalForeignKey]);
 
                     // Update the count value for for counter cache column
                     $this->updateCount($reModel, $reModel->{$relationName}(), $counterCacheConditions, $originalForeignKey, $counterCacheColumnName);
@@ -140,10 +140,10 @@ class CounterCache
         $countQuery = $model->newQuery()
             ->select(DB::raw(sprintf('COUNT(%s.id)', $model->getTable())))
             ->join(
-                DB::raw(sprintf('(SELECT %s.%s FROM %s) as relation', $relationTableName, $relation->getOwnerKey(), $relationTableName)),
-                $relation->getQualifiedForeignKey(), '=', sprintf('relation.%s', $relation->getOwnerKey())
+                DB::raw(sprintf('(SELECT %s.%s FROM %s) as relation', $relationTableName, $relation->getOwnerKeyName(), $relationTableName)),
+                $relation->getQualifiedForeignKeyName(), '=', sprintf('relation.%s', $relation->getOwnerKeyName())
             )
-            ->where($relation->getQualifiedForeignKey(), '=', $this->prepareValue($foreignKey));
+            ->where($relation->getQualifiedForeignKeyName(), '=', $this->prepareValue($foreignKey));
 
         // If our relation has additional conditions, we'll need
         // to add them to our query builder that counts the entries
