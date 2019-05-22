@@ -69,7 +69,7 @@ class CounterCache
 
                 // If our model's foreign key has been updated,
                 // we need to update the counter cache for the previous value as well
-                if (! is_null($model->getOriginal($relation->getForeignKey())) && $model->getOriginal($relation->getForeignKeyName()) != $model->getAttribute($relation->getForeignKeyName())) {
+                if (! is_null($model->getOriginal($relation->getForeignKeyName())) && $model->getOriginal($relation->getForeignKeyName()) != $model->getAttribute($relation->getForeignKeyName())) {
                     // Retrieve original foreign key
                     $originalForeignKey = $model->getOriginal($relation->getForeignKeyName());
 
